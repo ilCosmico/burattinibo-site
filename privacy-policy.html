@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy — Burattini di Bologna</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: #fdf6ee;
+            color: #2c1a0e;
+        }
+
+        /* ── Header with video background ── */
+        header {
+            position: relative;
+            height: 340px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-left: 40px;
+        }
+
+        header video {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%; min-height: 100%;
+            width: auto; height: auto;
+            object-fit: cover;
+        }
+
+        .header-overlay {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 20px;
+            background: rgba(30, 10, 0, 0.55);
+            border-radius: 16px;
+            backdrop-filter: blur(2px);
+        }
+
+        .header-overlay img {
+            width: 90px;
+            height: 90px;
+            border-radius: 22px;
+            border: 3px solid rgba(255,200,100,0.8);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            display: block;
+            margin: 0 auto 12px;
+        }
+
+        .header-overlay h1 {
+            font-size: 1.6em;
+            color: #fff;
+            letter-spacing: 0.04em;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+        }
+
+        .header-overlay p {
+            font-size: 0.95em;
+            color: #f0c97a;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        /* ── Content ── */
+        main {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 24px 60px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(44,26,14,0.08);
+            border-left: 4px solid #c0392b;
+        }
+
+        .card h2 {
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #c0392b;
+            margin-bottom: 10px;
+        }
+
+        .card p, .card li {
+            font-size: 0.97em;
+            line-height: 1.75;
+            color: #3a2010;
+        }
+
+        .card ul {
+            padding-left: 18px;
+            margin-top: 8px;
+        }
+
+        .card ul li {
+            margin-bottom: 8px;
+        }
+
+        .card ul li strong {
+            color: #2c1a0e;
+        }
+
+        a { color: #c0392b; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.8em;
+            color: #999;
+            border-top: 1px solid #e8ddd0;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <video autoplay muted loop playsinline>
+        <source src="assets/ilCosmicoApps.mp4" type="video/mp4">
+    </video>
+    <div class="header-overlay">
+        <img src="assets/ic_launcher.png" alt="Burattini di Bologna">
+        <h1>Privacy Policy</h1>
+        <p>Burattini di Bologna</p>
+    </div>
+</header>
+
+<main>
+
+    <div class="card">
+        <h2>Panoramica</h2>
+        <p>L'app <strong>Burattini di Bologna</strong>, sviluppata da ilCosmico,
+           adotta un approccio minimo alla raccolta dei dati.</p>
+    </div>
+
+    <div class="card">
+        <h2>Raccolta dati</h2>
+        <p>L'app non raccoglie né condivide dati personali dell'utente.</p>
+        <p>Vengono utilizzati due servizi Google:</p>
+        <ul>
+            <li><strong>Firebase Cloud Messaging</strong> — utilizzato per inviare notifiche
+                push sugli spettacoli, tramite token dispositivo anonimi.
+                Si applica la <a href="https://policies.google.com/privacy">privacy policy di Google</a>.</li>
+            <li><strong>Firebase Crashlytics</strong> — gestisce la segnalazione anonima
+                di errori tecnici, senza trasmettere informazioni personali.</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Acquisti in-app</h2>
+        <p>Gli acquisti facoltativi vengono elaborati tramite Google Play.
+           ilCosmico non memorizza direttamente dati di pagamento.</p>
+    </div>
+
+    <div class="card">
+        <h2>Bambini</h2>
+        <p>L'app è adatta a tutte le età e non raccoglie dati specifici sui minori.</p>
+    </div>
+
+    <div class="card">
+        <h2>Contatti</h2>
+        <p><a href="mailto:ilcosmico@gmail.com">ilcosmico@gmail.com</a></p>
+    </div>
+
+</main>
+
+<footer>Ultimo aggiornamento: 4 aprile 2026</footer>
+
+</body>
+</html>
