@@ -169,6 +169,16 @@
         }
         .btn-send:hover { background: #a93226; }
         .btn-send:disabled { background: #ccc; cursor: not-allowed; }
+        .btn-send.new { background: #2e7d32; }
+        .btn-send.new:hover { background: #1b5e20; }
+
+        /* Read-only state after send */
+        .form-sent input, .form-sent textarea {
+            background: #f0ece8;
+            color: #666;
+            cursor: default;
+            border-color: #e0d8d0;
+        }
 
         /* ── Status messages ── */
         #status {
@@ -317,14 +327,48 @@
         try {
             await sendNotification({ title, message, url, eventDate, eventTime, eventLocation });
             showStatus("Notifica inviata con successo!", "success");
-            clearForm();
+            lockForm();
         } catch (e) {
             showStatus("Errore durante l'invio: " + (e.message || e), "error");
-        } finally {
             btn.disabled = false;
             btn.textContent = "Invia notifica a tutti";
+            btn.classList.remove("new");
         }
     });
+
+    function lockForm() {
+        // Make all fields read-only and switch button to "Crea nuova notifica"
+        const fields = ["title", "message", "url", "eventDate", "eventTime", "eventLocation"];
+        fields.forEach(id => {
+            const el = document.getElementById(id);
+            el.setAttribute("readonly", true);
+            el.style.pointerEvents = "none";
+        });
+        document.querySelector("main").classList.add("form-sent");
+
+        const btn = document.getElementById("btnSend");
+        btn.disabled = false;
+        btn.textContent = "Crea nuova notifica";
+        btn.classList.add("new");
+        btn.onclick = resetForm;
+    }
+
+    function resetForm() {
+        const fields = ["title", "message", "url", "eventDate", "eventTime", "eventLocation"];
+        fields.forEach(id => {
+            const el = document.getElementById(id);
+            el.value = "";
+            el.removeAttribute("readonly");
+            el.style.pointerEvents = "";
+        });
+        document.querySelector("main").classList.remove("form-sent");
+
+        const btn = document.getElementById("btnSend");
+        btn.textContent = "Invia notifica a tutti";
+        btn.classList.remove("new");
+        btn.onclick = null;
+        hideStatus();
+    }
 
     function showStatus(msg, type) {
         const el = document.getElementById("status");
@@ -335,11 +379,6 @@
 
     function hideStatus() {
         document.getElementById("status").style.display = "none";
-    }
-
-    function clearForm() {
-        ["title", "message", "url", "eventDate", "eventTime", "eventLocation"]
-            .forEach(id => document.getElementById(id).value = "");
     }
 </script>
 
