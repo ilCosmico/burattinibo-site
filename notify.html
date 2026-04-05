@@ -78,22 +78,26 @@
         .user-bar {
             background: #fff7ee;
             border-bottom: 1px solid #e8ddd0;
-            padding: 10px 28px;
+            padding: 10px 20px;
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
+            gap: 8px;
             font-size: 0.9em;
             color: #666;
         }
-        .user-bar span { font-weight: bold; color: #2c1a0e; }
+        .user-bar span { font-weight: bold; color: #2c1a0e; word-break: break-all; }
         .btn-logout {
             background: none;
             border: 1px solid #ccc;
             border-radius: 6px;
-            padding: 4px 12px;
+            padding: 6px 16px;
             cursor: pointer;
             font-size: 0.85em;
             color: #666;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
         .btn-logout:hover { background: #f0e8e0; }
 
@@ -369,6 +373,7 @@
 
     function resetForm() {
         formSent = false;
+        window.scrollTo({ top: 0, behavior: "smooth" });
         const fields = ["title", "message", "url", "eventDate", "eventTime", "eventLocation"];
         fields.forEach(id => {
             const el = document.getElementById(id);
