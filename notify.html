@@ -80,15 +80,16 @@
             border-bottom: 1px solid #e8ddd0;
             padding: 10px 20px;
             display: flex;
-            flex-direction: column;
-            gap: 2px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
             font-size: 0.9em;
             color: #666;
         }
         .user-bar > div {
             display: flex;
-            align-items: center;
-            gap: 10px;
+            flex-direction: column;
+            gap: 2px;
         }
         .user-bar span { font-weight: bold; color: #2c1a0e; word-break: break-all; }
         .btn-logout {
@@ -231,8 +232,11 @@
 <!-- Main screen (shown after login) -->
 <div id="mainScreen">
     <div class="user-bar">
-        <div>Connesso come <button class="btn-logout" id="btnLogout">Esci</button></div>
-        <span id="userEmail"></span>
+        <div>
+            <div>Connesso come</div>
+            <span id="userEmail"></span>
+        </div>
+        <button class="btn-logout" id="btnLogout">Esci</button>
     </div>
 
     <main>

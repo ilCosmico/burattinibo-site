@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burattini di Bologna</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Georgia, serif;
+            background: #fdf6ee;
+            color: #2c1a0e;
+        }
+
+        /* ── Header with video background ── */
+        header {
+            position: relative;
+            height: 420px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        header video {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%; min-height: 100%;
+            width: auto; height: auto;
+            object-fit: cover;
+        }
+
+        .header-overlay {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 28px 32px;
+            background: rgba(30, 10, 0, 0.6);
+            border-radius: 18px;
+            backdrop-filter: blur(2px);
+        }
+
+        .header-overlay img {
+            width: 100px;
+            height: 100px;
+            border-radius: 24px;
+            border: 3px solid rgba(255,200,100,0.8);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            display: block;
+            margin: 0 auto 14px;
+        }
+
+        .header-overlay h1 {
+            font-size: 1.9em;
+            color: #fff;
+            letter-spacing: 0.04em;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+        }
+
+        .header-overlay p {
+            font-size: 1em;
+            color: #f0c97a;
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        /* ── Content ── */
+        main {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 48px 24px 60px;
+        }
+
+        .description {
+            text-align: center;
+            font-size: 1.05em;
+            line-height: 1.8;
+            color: #4a2e18;
+            margin-bottom: 40px;
+        }
+
+        /* ── Play Store button ── */
+        .btn-store {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: #1a0a00;
+            color: #f0c97a;
+            border-radius: 12px;
+            padding: 16px 28px;
+            font-size: 1.05em;
+            font-family: Georgia, serif;
+            text-decoration: none;
+            max-width: 320px;
+            margin: 0 auto 48px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .btn-store:hover {
+            background: #3a1a00;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+        }
+        .btn-store img { width: 28px; }
+
+        /* ── Feature cards ── */
+        .features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+        @media (max-width: 500px) {
+            .features { grid-template-columns: 1fr; }
+        }
+
+        .feature {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(44,26,14,0.08);
+            border-left: 4px solid #c0392b;
+        }
+        .feature h3 {
+            font-size: 0.95em;
+            color: #c0392b;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .feature p {
+            font-size: 0.9em;
+            color: #4a2e18;
+            line-height: 1.6;
+        }
+
+        /* ── Footer ── */
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.85em;
+            color: #999;
+            border-top: 1px solid #e8ddd0;
+        }
+        footer a { color: #c0392b; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<header>
+    <video autoplay muted loop playsinline>
+        <source src="assets/ilCosmicoApps.mp4" type="video/mp4">
+    </video>
+    <div class="header-overlay">
+        <img src="assets/logo_app.png" alt="Burattini di Bologna">
+        <h1>Burattini di Bologna</h1>
+        <p>I burattini di Riccardo Pazzaglia</p>
+    </div>
+</header>
+
+<main>
+
+    <p class="description">
+        Scopri il mondo dei burattini bolognesi con l'app ufficiale di Riccardo Pazzaglia.
+        Giochi, presentazioni, notifiche sugli spettacoli e tanto altro.
+    </p>
+
+    <a class="btn-store"
+       href="https://play.google.com/store/apps/details?id=com.ilCosmico.burattinibo"
+       target="_blank" rel="noopener">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="">
+        Scarica su Google Play
+    </a>
+
+    <div class="features">
+        <div class="feature">
+            <h3>Presentazione</h3>
+            <p>Conosci i personaggi del teatro dei burattini bolognesi con audio originali.</p>
+        </div>
+        <div class="feature">
+            <h3>Squizza Mostri</h3>
+            <p>Il gioco dove devi colpire i mostri prima che scappino. Tre livelli di difficoltà.</p>
+        </div>
+        <div class="feature">
+            <h3>Memory</h3>
+            <p>Gioca a memory con le facce dei burattini, fino a 4 giocatori.</p>
+        </div>
+        <div class="feature">
+            <h3>Puzzle</h3>
+            <p>Ricomponi il burattino contro il tempo. Più pezzi, più difficile.</p>
+        </div>
+        <div class="feature">
+            <h3>Labirinto</h3>
+            <p>Guida Sganapino attraverso il labirinto, livello dopo livello.</p>
+        </div>
+        <div class="feature">
+            <h3>Notifiche</h3>
+            <p>Ricevi avvisi sugli spettacoli direttamente sul tuo telefono.</p>
+        </div>
+    </div>
+
+</main>
+
+<footer>
+    <p>
+        &copy; 2026 ilCosmico &nbsp;·&nbsp;
+        <a href="privacy-policy.html">Privacy Policy</a>
+    </p>
+</footer>
+
+</body>
+</html>
