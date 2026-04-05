@@ -1,5 +1,13 @@
 # Changelog — BurattiniBO Site
 
+## [1.1] — 2026-04-05
+
+### Changed
+- `index.html` — header overlay aligned left (same as privacy-policy); title changed to
+  "BurattiniBO"; YouTube iframe replaced with thumbnail + play button link (embedding was
+  disabled on the video); header left-aligned
+- `privacy-policy.html` — header subtitle changed from "Burattini di Bologna" to "BurattiniBO"
+
 ## [1.0] — 2026-04-05
 
 ### Added

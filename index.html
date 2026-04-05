@@ -20,7 +20,8 @@
             overflow: hidden;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
+            padding-left: 40px;
         }
 
         header video {
@@ -107,19 +108,35 @@
 
         /* ── YouTube video ── */
         .video-wrapper {
+            display: block;
             position: relative;
-            padding-bottom: 56.25%; /* 16:9 */
-            height: 0;
-            overflow: hidden;
             border-radius: 12px;
+            overflow: hidden;
             box-shadow: 0 4px 20px rgba(44,26,14,0.12);
             margin-bottom: 40px;
+            text-decoration: none;
         }
-        .video-wrapper iframe {
+        .video-wrapper img {
+            width: 100%;
+            display: block;
+        }
+        .video-play {
             position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            border-radius: 12px;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 64px; height: 64px;
+            background: rgba(192, 57, 43, 0.88);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6em;
+            color: #fff;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .video-wrapper:hover .video-play {
+            background: #c0392b;
+            transform: translate(-50%, -50%) scale(1.1);
         }
 
         /* ── Feature cards ── */
@@ -173,7 +190,7 @@
     </video>
     <div class="header-overlay">
         <img src="assets/logo_app.png" alt="Burattini di Bologna">
-        <h1>Burattini di Bologna</h1>
+        <h1>BurattiniBO</h1>
         <p>I burattini di Riccardo Pazzaglia</p>
     </div>
 </header>
@@ -192,14 +209,12 @@
         Scarica su Google Play
     </a>
 
-    <div class="video-wrapper">
-        <iframe src="https://www.youtube.com/embed/XDb6c7m9Wrk?si=9s-fe8wngFnBZFYt"
-                title="BurattiniBO - Presentazione App"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen></iframe>
-    </div>
+    <a class="video-wrapper" href="https://youtu.be/XDb6c7m9Wrk?si=UI_Ti7K73jGjxaGL"
+       target="_blank" rel="noopener" title="BurattiniBO - Presentazione App">
+        <img src="https://img.youtube.com/vi/XDb6c7m9Wrk/maxresdefault.jpg"
+             alt="BurattiniBO - Presentazione App">
+        <div class="video-play">&#9654;</div>
+    </a>
 
     <div class="features">
         <div class="feature">
