@@ -281,6 +281,8 @@
 
     const sendNotification = httpsCallable(functions, "sendNotification");
 
+    let formSent = false;
+
     // ── Auth state ────────────────────────────────────────────────────────────
     onAuthStateChanged(auth, user => {
         if (user) {
@@ -305,8 +307,13 @@
     // ── Logout ────────────────────────────────────────────────────────────────
     document.getElementById("btnLogout").addEventListener("click", () => signOut(auth));
 
-    // ── Send ──────────────────────────────────────────────────────────────────
+    // ── Single button handler (send or reset depending on state) ──────────────
     document.getElementById("btnSend").addEventListener("click", async () => {
+        if (formSent) {
+            resetForm();
+            return;
+        }
+
         const title         = document.getElementById("title").value.trim();
         const message       = document.getElementById("message").value.trim();
         const url           = document.getElementById("url").value.trim();
@@ -332,12 +339,11 @@
             showStatus("Errore durante l'invio: " + (e.message || e), "error");
             btn.disabled = false;
             btn.textContent = "Invia notifica a tutti";
-            btn.classList.remove("new");
         }
     });
 
     function lockForm() {
-        // Make all fields read-only and switch button to "Crea nuova notifica"
+        formSent = true;
         const fields = ["title", "message", "url", "eventDate", "eventTime", "eventLocation"];
         fields.forEach(id => {
             const el = document.getElementById(id);
@@ -350,10 +356,10 @@
         btn.disabled = false;
         btn.textContent = "Crea nuova notifica";
         btn.classList.add("new");
-        btn.onclick = resetForm;
     }
 
     function resetForm() {
+        formSent = false;
         const fields = ["title", "message", "url", "eventDate", "eventTime", "eventLocation"];
         fields.forEach(id => {
             const el = document.getElementById(id);
@@ -366,7 +372,6 @@
         const btn = document.getElementById("btnSend");
         btn.textContent = "Invia notifica a tutti";
         btn.classList.remove("new");
-        btn.onclick = null;
         hideStatus();
     }
 
