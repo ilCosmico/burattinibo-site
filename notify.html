@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BurattiniBO — Invia notifica</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Georgia, serif;
+            background: #fdf6ee;
+            color: #2c1a0e;
+            min-height: 100vh;
+        }
+
+        /* ── Header ── */
+        header {
+            background: #1a0a00;
+            padding: 18px 28px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        header img {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+        }
+        header h1 {
+            font-size: 1.2em;
+            color: #f0c97a;
+            letter-spacing: 0.04em;
+        }
+        header p {
+            font-size: 0.8em;
+            color: #aaa;
+        }
+
+        /* ── Login screen ── */
+        #loginScreen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 80px);
+            padding: 40px 20px;
+        }
+        #loginScreen h2 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #2c1a0e;
+        }
+        #loginScreen p {
+            color: #777;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+        .btn-google {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 1em;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: box-shadow 0.2s;
+        }
+        .btn-google:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+        .btn-google img { width: 22px; }
+
+        /* ── Main screen ── */
+        #mainScreen { display: none; }
+
+        .user-bar {
+            background: #fff7ee;
+            border-bottom: 1px solid #e8ddd0;
+            padding: 10px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .user-bar span { font-weight: bold; color: #2c1a0e; }
+        .btn-logout {
+            background: none;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 0.85em;
+            color: #666;
+        }
+        .btn-logout:hover { background: #f0e8e0; }
+
+        main {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 36px 24px 60px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 2px 12px rgba(44,26,14,0.08);
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #c0392b;
+            margin-bottom: 20px;
+        }
+
+        .field { margin-bottom: 18px; }
+        .field label {
+            display: block;
+            font-size: 0.88em;
+            color: #666;
+            margin-bottom: 6px;
+        }
+        .field input, .field textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.97em;
+            font-family: Georgia, serif;
+            background: #fdf6ee;
+            color: #2c1a0e;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .field input:focus, .field textarea:focus {
+            border-color: #c0392b;
+        }
+        .field textarea { resize: vertical; min-height: 90px; }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .optional-label {
+            font-size: 0.78em;
+            color: #aaa;
+            margin-left: 4px;
+        }
+
+        .btn-send {
+            width: 100%;
+            padding: 14px;
+            background: #c0392b;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.05em;
+            font-family: Georgia, serif;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+        .btn-send:hover { background: #a93226; }
+        .btn-send:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* ── Status messages ── */
+        #status {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            display: none;
+        }
+        #status.success { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+        #status.error   { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="assets/logo_app.png" alt="BurattiniBO">
+    <div>
+        <h1>BurattiniBO</h1>
+        <p>Invio notifiche</p>
+    </div>
+</header>
+
+<!-- Login screen -->
+<div id="loginScreen">
+    <h2>Accesso richiesto</h2>
+    <p>Esegui il login per inviare notifiche agli utenti dell'app.</p>
+    <button class="btn-google" id="btnLogin">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+        Accedi con Google
+    </button>
+</div>
+
+<!-- Main screen (shown after login) -->
+<div id="mainScreen">
+    <div class="user-bar">
+        Connesso come <span id="userEmail"></span>
+        <button class="btn-logout" id="btnLogout">Esci</button>
+    </div>
+
+    <main>
+        <div class="card">
+            <h2>Messaggio</h2>
+            <div class="field">
+                <label>Titolo</label>
+                <input type="text" id="title" maxlength="50" placeholder="Es. Nuovo spettacolo!">
+            </div>
+            <div class="field">
+                <label>Messaggio</label>
+                <textarea id="message" maxlength="500" placeholder="Testo della notifica..."></textarea>
+            </div>
+            <div class="field">
+                <label>URL <span class="optional-label">(opzionale)</span></label>
+                <input type="url" id="url" placeholder="https://...">
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Evento <span class="optional-label">— compila solo per spettacoli/eventi</span></h2>
+            <div class="field-row">
+                <div class="field">
+                    <label>Data (aaaa-mm-gg)</label>
+                    <input type="date" id="eventDate">
+                </div>
+                <div class="field">
+                    <label>Ora (hh:mm)</label>
+                    <input type="time" id="eventTime">
+                </div>
+            </div>
+            <div class="field">
+                <label>Luogo <span class="optional-label">(opzionale)</span></label>
+                <input type="text" id="eventLocation" placeholder="Es. Via del Pratello 57, Bologna">
+            </div>
+        </div>
+
+        <button class="btn-send" id="btnSend">Invia notifica a tutti</button>
+        <div id="status"></div>
+    </main>
+</div>
+
+<script type="module">
+    import { initializeApp }        from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+                                    from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { getFunctions, httpsCallable }
+                                    from "https://www.gstatic.com/firebasejs/12.11.0/firebase-functions.js";
+
+    const firebaseConfig = {
+        apiKey:            "AIzaSyDHGrMVWdWjbu0qZIdkZkuTKOAY-Fz16uY",
+        authDomain:        "burattinibo-7ec06.firebaseapp.com",
+        projectId:         "burattinibo-7ec06",
+        storageBucket:     "burattinibo-7ec06.firebasestorage.app",
+        messagingSenderId: "985982428643",
+        appId:             "1:985982428643:web:317fd445f0e21a23c1acd6"
+    };
+
+    const app       = initializeApp(firebaseConfig);
+    const auth      = getAuth(app);
+    const functions = getFunctions(app, "europe-west1");
+
+    const sendNotification = httpsCallable(functions, "sendNotification");
+
+    // ── Auth state ────────────────────────────────────────────────────────────
+    onAuthStateChanged(auth, user => {
+        if (user) {
+            document.getElementById("loginScreen").style.display = "none";
+            document.getElementById("mainScreen").style.display  = "block";
+            document.getElementById("userEmail").textContent     = user.email;
+        } else {
+            document.getElementById("loginScreen").style.display = "flex";
+            document.getElementById("mainScreen").style.display  = "none";
+        }
+    });
+
+    // ── Login ─────────────────────────────────────────────────────────────────
+    document.getElementById("btnLogin").addEventListener("click", async () => {
+        try {
+            await signInWithPopup(auth, new GoogleAuthProvider());
+        } catch (e) {
+            console.error("Login error", e);
+        }
+    });
+
+    // ── Logout ────────────────────────────────────────────────────────────────
+    document.getElementById("btnLogout").addEventListener("click", () => signOut(auth));
+
+    // ── Send ──────────────────────────────────────────────────────────────────
+    document.getElementById("btnSend").addEventListener("click", async () => {
+        const title         = document.getElementById("title").value.trim();
+        const message       = document.getElementById("message").value.trim();
+        const url           = document.getElementById("url").value.trim();
+        const eventDate     = document.getElementById("eventDate").value;
+        const eventTime     = document.getElementById("eventTime").value;
+        const eventLocation = document.getElementById("eventLocation").value.trim();
+
+        if (!title && !message) {
+            showStatus("Inserisci almeno il titolo o il messaggio.", "error");
+            return;
+        }
+
+        const btn = document.getElementById("btnSend");
+        btn.disabled = true;
+        btn.textContent = "Invio in corso...";
+        hideStatus();
+
+        try {
+            await sendNotification({ title, message, url, eventDate, eventTime, eventLocation });
+            showStatus("Notifica inviata con successo!", "success");
+            clearForm();
+        } catch (e) {
+            showStatus("Errore durante l'invio: " + (e.message || e), "error");
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Invia notifica a tutti";
+        }
+    });
+
+    function showStatus(msg, type) {
+        const el = document.getElementById("status");
+        el.textContent = msg;
+        el.className = type;
+        el.style.display = "block";
+    }
+
+    function hideStatus() {
+        document.getElementById("status").style.display = "none";
+    }
+
+    function clearForm() {
+        ["title", "message", "url", "eventDate", "eventTime", "eventLocation"]
+            .forEach(id => document.getElementById(id).value = "");
+    }
+</script>
+
+</body>
+</html>
