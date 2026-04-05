@@ -147,6 +147,11 @@
             grid-template-columns: 1fr 1fr;
             gap: 14px;
         }
+        @media (max-width: 500px) {
+            .field-row { grid-template-columns: 1fr; }
+            main { padding: 20px 16px 50px; }
+            .card { padding: 20px; }
+        }
 
         .optional-label {
             font-size: 0.78em;
@@ -240,11 +245,11 @@
             <h2>Evento <span class="optional-label">— compila solo per spettacoli/eventi</span></h2>
             <div class="field-row">
                 <div class="field">
-                    <label>Data (aaaa-mm-gg)</label>
+                    <label>Data evento</label>
                     <input type="date" id="eventDate">
                 </div>
                 <div class="field">
-                    <label>Ora (hh:mm)</label>
+                    <label>Ora inizio</label>
                     <input type="time" id="eventTime">
                 </div>
             </div>
