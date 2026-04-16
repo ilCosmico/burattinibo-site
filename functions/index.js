@@ -1,8 +1,17 @@
-const { onCall, HttpsError } = require("firebase-functions/v2/https");
-const { initializeApp }      = require("firebase-admin/app");
-const { getMessaging }       = require("firebase-admin/messaging");
+const { onCall, HttpsError }  = require("firebase-functions/v2/https");
+const { onDocumentCreated }   = require("firebase-functions/v2/firestore");
+const { defineSecret }        = require("firebase-functions/params");
+const { initializeApp }       = require("firebase-admin/app");
+const { getMessaging }        = require("firebase-admin/messaging");
+const nodemailer              = require("nodemailer");
 
 initializeApp();
+
+const gmailUser = defineSecret("GMAIL_USER");
+const gmailPass = defineSecret("GMAIL_APP_PASSWORD");
+
+// Recipient of suggestion notification emails.
+const ADMIN_EMAIL = "ilcosmico@gmail.com";
 
 // Email addresses authorized to send notifications.
 const AUTHORIZED_EMAILS = [
@@ -55,3 +64,59 @@ exports.sendNotification = onCall({ region: "europe-west1" }, async (request) =>
     await getMessaging().send(fcmMessage);
     return { success: true };
 });
+
+/**
+ * Firestore trigger: onSuggestionCreated
+ *
+ * Fires whenever a new document is written to the "suggestions" collection
+ * (i.e. when a user submits a suggestion from the app).
+ * Sends an email notification to the admin via Gmail + Nodemailer.
+ *
+ * Required secrets (set via Firebase CLI before deploying):
+ *   firebase functions:secrets:set GMAIL_USER        (e.g. ilcosmico@gmail.com)
+ *   firebase functions:secrets:set GMAIL_APP_PASSWORD (Gmail App Password)
+ */
+exports.onSuggestionCreated = onDocumentCreated(
+    {
+        document:  "suggestions/{docId}",
+        region:    "europe-west1",
+        secrets:   [gmailUser, gmailPass],
+    },
+    async (event) => {
+        const data       = event.data.data();
+        const name       = data.name       || "";
+        const email      = data.email      || "";
+        const text       = data.text       || "";
+        const appVersion = data.appVersion || "n/d";
+
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: gmailUser.value(),
+                pass: gmailPass.value(),
+            },
+        });
+
+        await transporter.sendMail({
+            from:    `"BurattiniBO App" <${gmailUser.value()}>`,
+            to:      ADMIN_EMAIL,
+            subject: `Nuovo suggerimento da ${escapeHtml(name)}`,
+            html: `
+                <h2 style="color:#c0392b;">Nuovo suggerimento — BurattiniBO</h2>
+                <p><strong>Nome:</strong> ${escapeHtml(name)}</p>
+                <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+                <p><strong>Versione app:</strong> ${escapeHtml(appVersion)}</p>
+                <hr style="margin:16px 0;">
+                <p style="white-space:pre-wrap;">${escapeHtml(text)}</p>
+            `,
+        });
+    }
+);
+
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g,  "&amp;")
+        .replace(/</g,  "&lt;")
+        .replace(/>/g,  "&gt;")
+        .replace(/"/g,  "&quot;");
+}

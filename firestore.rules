@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /suggestions/{docId} {
+      // Anyone can submit a suggestion, with data validation
+      allow create: if request.resource.data.keys().hasAll(['name', 'email', 'text', 'timestamp', 'appVersion', 'status', 'notes'])
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.email is string
+                    && request.resource.data.email.size() > 0
+                    && request.resource.data.text is string
+                    && request.resource.data.text.size() >= 20
+                    && request.resource.data.text.size() <= 500
+                    && request.resource.data.status == "inoltrata"
+                    && request.resource.data.notes == "";
+      // Only authorized admins can read and update
+      allow read, update: if request.auth != null
+                          && request.auth.token.email in ['ilcosmico@gmail.com', 'burattinidiriccardo@gmail.com'];
+    }
+  }
+}

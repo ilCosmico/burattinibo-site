@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BurattiniBO — Suggerimenti</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Georgia, serif;
+            background: #fdf6ee;
+            color: #2c1a0e;
+            min-height: 100vh;
+        }
+
+        /* ── Header ── */
+        header {
+            background: #1a0a00;
+            padding: 18px 28px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        header img { width: 48px; height: 48px; border-radius: 12px; }
+        header h1  { font-size: 1.2em; color: #f0c97a; letter-spacing: 0.04em; }
+        header p   { font-size: 0.8em; color: #aaa; }
+
+        /* ── Login screen ── */
+        #loginScreen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 80px);
+            padding: 40px 20px;
+        }
+        #loginScreen h2 { font-size: 1.3em; margin-bottom: 10px; }
+        #loginScreen p  { color: #777; margin-bottom: 30px; font-size: 0.95em; }
+        .btn-google {
+            display: flex; align-items: center; gap: 12px;
+            background: #fff; border: 1px solid #ddd; border-radius: 8px;
+            padding: 12px 24px; font-size: 1em; cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: box-shadow 0.2s;
+        }
+        .btn-google:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+        .btn-google img   { width: 22px; }
+
+        /* ── Main screen ── */
+        #mainScreen { display: none; }
+
+        .user-bar {
+            background: #fff7ee; border-bottom: 1px solid #e8ddd0;
+            padding: 10px 20px; display: flex; align-items: center;
+            justify-content: space-between; gap: 12px;
+            font-size: 0.9em; color: #666;
+        }
+        .user-bar > div { display: flex; flex-direction: column; gap: 2px; }
+        .user-bar span  { font-weight: bold; color: #2c1a0e; word-break: break-all; }
+        .btn-logout {
+            background: none; border: 1px solid #ccc; border-radius: 6px;
+            padding: 6px 16px; cursor: pointer; font-size: 0.85em; color: #666;
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .btn-logout:hover { background: #f0e8e0; }
+
+        main {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 36px 24px 60px;
+        }
+
+        /* ── Toolbar ── */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .toolbar h2 {
+            font-size: 1.1em;
+            color: #2c1a0e;
+        }
+        .filter-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: #fff; border: 1px solid #ddd; border-radius: 20px;
+            padding: 5px 14px; font-size: 0.82em; cursor: pointer;
+            font-family: Georgia, serif; color: #555; transition: all 0.15s;
+        }
+        .filter-btn:hover   { border-color: #c0392b; color: #c0392b; }
+        .filter-btn.active  { background: #c0392b; border-color: #c0392b; color: #fff; }
+
+        /* ── Empty state ── */
+        #emptyState {
+            text-align: center;
+            color: #aaa;
+            padding: 60px 20px;
+            font-size: 0.95em;
+        }
+
+        /* ── Suggestion card ── */
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px 24px;
+            box-shadow: 0 2px 10px rgba(44,26,14,0.07);
+            margin-bottom: 16px;
+            border-left: 4px solid #ddd;
+            transition: border-color 0.2s;
+        }
+        .card[data-status="inoltrata"] { border-left-color: #7f8c8d; }
+        .card[data-status="accettata"] { border-left-color: #e67e22; }
+        .card[data-status="rifiutata"] { border-left-color: #c0392b; }
+        .card[data-status="fatta"]     { border-left-color: #27ae60; }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+        .sender-name  { font-weight: bold; font-size: 1em; }
+        .sender-email { font-size: 0.82em; color: #888; }
+        .card-meta    { font-size: 0.78em; color: #aaa; margin-bottom: 12px; }
+
+        /* Status badge + select */
+        .status-wrap { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .status-select {
+            border: 1px solid #ddd; border-radius: 6px;
+            padding: 4px 10px; font-size: 0.82em;
+            font-family: Georgia, serif; background: #fdf6ee; cursor: pointer;
+            outline: none;
+        }
+        .status-select:focus { border-color: #c0392b; }
+
+        /* Suggestion text */
+        .suggestion-text {
+            font-size: 0.95em;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            background: #fdf6ee;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-bottom: 14px;
+        }
+
+        /* Notes */
+        .notes-label {
+            font-size: 0.8em;
+            color: #999;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .notes-textarea {
+            width: 100%;
+            border: 1px solid #e0d8d0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.9em;
+            font-family: Georgia, serif;
+            background: #fdf6ee;
+            color: #2c1a0e;
+            resize: vertical;
+            min-height: 56px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .notes-textarea:focus { border-color: #c0392b; }
+
+        .card-footer {
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+            margin-top: 10px;
+            gap: 10px;
+        }
+        .saved-label {
+            font-size: 0.8em;
+            color: #27ae60;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .saved-label.visible { opacity: 1; }
+        .btn-save {
+            background: #c0392b; color: #fff; border: none; border-radius: 8px;
+            padding: 7px 20px; font-size: 0.88em; font-family: Georgia, serif;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .btn-save:hover    { background: #a93226; }
+        .btn-save:disabled { background: #ccc; cursor: not-allowed; }
+
+        /* ── Toast ── */
+        #toast {
+            display: none; position: fixed;
+            top: 0; left: 0; right: 0; z-index: 999;
+            padding: 14px 20px; font-size: 1em; text-align: center;
+            font-family: Georgia, serif; box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+        #toast.success { background: #2e7d32; color: #fff; }
+        #toast.error   { background: #c62828; color: #fff; }
+
+        @media (max-width: 520px) {
+            main { padding: 20px 14px 50px; }
+            .card { padding: 16px; }
+            .card-header { flex-direction: column; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="assets/logo_app.png" alt="BurattiniBO">
+    <div>
+        <h1>BurattiniBO</h1>
+        <p>Gestione suggerimenti</p>
+    </div>
+</header>
+
+<!-- Login screen -->
+<div id="loginScreen">
+    <h2>Accesso richiesto</h2>
+    <p>Esegui il login per visualizzare i suggerimenti degli utenti.</p>
+    <button class="btn-google" id="btnLogin">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+        Accedi con Google
+    </button>
+</div>
+
+<!-- Main screen -->
+<div id="mainScreen">
+    <div class="user-bar">
+        <div>
+            <div>Connesso come</div>
+            <span id="userEmail"></span>
+        </div>
+        <button class="btn-logout" id="btnLogout">Esci</button>
+    </div>
+
+    <main>
+        <div class="toolbar">
+            <h2 id="listTitle">Suggerimenti</h2>
+            <div class="filter-row">
+                <button class="filter-btn active" data-filter="tutti">Tutti</button>
+                <button class="filter-btn" data-filter="inoltrata">Inoltrata</button>
+                <button class="filter-btn" data-filter="accettata">Accettata</button>
+                <button class="filter-btn" data-filter="rifiutata">Rifiutata</button>
+                <button class="filter-btn" data-filter="fatta">Fatta</button>
+            </div>
+        </div>
+
+        <div id="suggestionsList"></div>
+        <div id="emptyState" style="display:none;">Nessun suggerimento da visualizzare.</div>
+    </main>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+    import { initializeApp }
+        from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+        from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { getFirestore, collection, query, orderBy, onSnapshot, doc, updateDoc }
+        from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey:            "AIzaSyDHGrMVWdWjbu0qZIdkZkuTKOAY-Fz16uY",
+        authDomain:        "burattinibo-7ec06.firebaseapp.com",
+        projectId:         "burattinibo-7ec06",
+        storageBucket:     "burattinibo-7ec06.firebasestorage.app",
+        messagingSenderId: "985982428643",
+        appId:             "1:985982428643:web:317fd445f0e21a23c1acd6"
+    };
+
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+
+    const AUTHORIZED_EMAILS = ["ilcosmico@gmail.com", "burattinidiriccardo@gmail.com"];
+    const STATUS_LABELS = {
+        inoltrata: "Inoltrata",
+        accettata: "Accettata",
+        rifiutata: "Rifiutata",
+        fatta:     "Fatta",
+    };
+
+    let allDocs      = [];   // full snapshot data
+    let activeFilter = "tutti";
+    let unsubscribe  = null;
+
+    // ── Auth ─────────────────────────────────────────────────────────────────
+    onAuthStateChanged(auth, user => {
+        if (user && AUTHORIZED_EMAILS.includes(user.email)) {
+            document.getElementById("loginScreen").style.display = "none";
+            document.getElementById("mainScreen").style.display  = "block";
+            document.getElementById("userEmail").textContent     = user.email;
+            startListening();
+        } else {
+            document.getElementById("loginScreen").style.display = "flex";
+            document.getElementById("mainScreen").style.display  = "none";
+            if (unsubscribe) { unsubscribe(); unsubscribe = null; }
+            if (user) {
+                signOut(auth);
+                showToast("Account non autorizzato.", "error");
+            }
+        }
+    });
+
+    document.getElementById("btnLogin").addEventListener("click", async () => {
+        try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+        catch (e) { console.error("Login error", e); }
+    });
+
+    document.getElementById("btnLogout").addEventListener("click", () => signOut(auth));
+
+    // ── Filter buttons ───────────────────────────────────────────────────────
+    document.querySelectorAll(".filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            activeFilter = btn.dataset.filter;
+            renderList();
+        });
+    });
+
+    // ── Firestore listener ───────────────────────────────────────────────────
+    function startListening() {
+        const q = query(collection(db, "suggestions"), orderBy("timestamp", "desc"));
+        unsubscribe = onSnapshot(q, snapshot => {
+            allDocs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+            renderList();
+        }, err => {
+            showToast("Errore nel caricamento: " + err.message, "error");
+        });
+    }
+
+    function renderList() {
+        const list  = document.getElementById("suggestionsList");
+        const empty = document.getElementById("emptyState");
+        const title = document.getElementById("listTitle");
+
+        const filtered = activeFilter === "tutti"
+            ? allDocs
+            : allDocs.filter(d => d.status === activeFilter);
+
+        title.textContent = activeFilter === "tutti"
+            ? `Suggerimenti (${allDocs.length})`
+            : `${STATUS_LABELS[activeFilter]} (${filtered.length})`;
+
+        list.innerHTML = "";
+
+        if (filtered.length === 0) {
+            empty.style.display = "block";
+            return;
+        }
+        empty.style.display = "none";
+
+        filtered.forEach(data => {
+            list.appendChild(buildCard(data));
+        });
+    }
+
+    function buildCard(data) {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.dataset.status = data.status || "inoltrata";
+
+        // Format date
+        let dateStr = "—";
+        if (data.timestamp) {
+            const d = data.timestamp.toDate();
+            dateStr = d.toLocaleDateString("it-IT", {
+                day: "2-digit", month: "short", year: "numeric",
+                hour: "2-digit", minute: "2-digit"
+            });
+        }
+
+        // Header
+        const header = document.createElement("div");
+        header.className = "card-header";
+
+        const senderDiv = document.createElement("div");
+        const nameEl  = document.createElement("div");
+        nameEl.className = "sender-name";
+        nameEl.textContent = data.name || "—";
+        const emailEl = document.createElement("div");
+        emailEl.className = "sender-email";
+        emailEl.textContent = data.email || "—";
+        senderDiv.appendChild(nameEl);
+        senderDiv.appendChild(emailEl);
+
+        const statusWrap = document.createElement("div");
+        statusWrap.className = "status-wrap";
+        const select = document.createElement("select");
+        select.className = "status-select";
+        Object.entries(STATUS_LABELS).forEach(([val, label]) => {
+            const opt = document.createElement("option");
+            opt.value = val;
+            opt.textContent = label;
+            if (val === (data.status || "inoltrata")) opt.selected = true;
+            select.appendChild(opt);
+        });
+        statusWrap.appendChild(select);
+
+        header.appendChild(senderDiv);
+        header.appendChild(statusWrap);
+
+        // Meta
+        const meta = document.createElement("div");
+        meta.className = "card-meta";
+        meta.textContent = `v${data.appVersion || "?"} · ${dateStr}`;
+
+        // Text
+        const textEl = document.createElement("div");
+        textEl.className = "suggestion-text";
+        textEl.textContent = data.text || "";
+
+        // Notes
+        const notesLabel = document.createElement("div");
+        notesLabel.className = "notes-label";
+        notesLabel.textContent = "Note interne";
+        const notesArea = document.createElement("textarea");
+        notesArea.className = "notes-textarea";
+        notesArea.placeholder = "Aggiungi una nota…";
+        notesArea.value = data.notes || "";
+
+        // Footer
+        const footer = document.createElement("div");
+        footer.className = "card-footer";
+        const savedLabel = document.createElement("span");
+        savedLabel.className = "saved-label";
+        savedLabel.textContent = "Salvato ✓";
+        const saveBtn = document.createElement("button");
+        saveBtn.className = "btn-save";
+        saveBtn.textContent = "Salva";
+        footer.appendChild(savedLabel);
+        footer.appendChild(saveBtn);
+
+        card.appendChild(header);
+        card.appendChild(meta);
+        card.appendChild(textEl);
+        card.appendChild(notesLabel);
+        card.appendChild(notesArea);
+        card.appendChild(footer);
+
+        // Save logic
+        saveBtn.addEventListener("click", async () => {
+            saveBtn.disabled = true;
+            saveBtn.textContent = "Salvataggio…";
+            try {
+                const newStatus = select.value;
+                const newNotes  = notesArea.value;
+                await updateDoc(doc(db, "suggestions", data.id), {
+                    status: newStatus,
+                    notes:  newNotes,
+                });
+                card.dataset.status = newStatus;
+                savedLabel.classList.add("visible");
+                setTimeout(() => savedLabel.classList.remove("visible"), 2500);
+            } catch (e) {
+                showToast("Errore nel salvataggio: " + e.message, "error");
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = "Salva";
+            }
+        });
+
+        return card;
+    }
+
+    // ── Toast ─────────────────────────────────────────────────────────────────
+    function showToast(msg, type) {
+        const el = document.getElementById("toast");
+        el.textContent = msg;
+        el.className = type;
+        el.style.display = "block";
+        setTimeout(() => { el.style.display = "none"; }, 3500);
+    }
+</script>
+
+</body>
+</html>
