@@ -66,6 +66,54 @@ exports.sendNotification = onCall({ region: "europe-west1" }, async (request) =>
 });
 
 /**
+ * Callable function: sendEmail
+ *
+ * Called by EmailActivity when the user submits the in-app contact form.
+ * No authentication required — anyone with the app can send an email.
+ * Sends the message to the puppet theater address (BCC to admin).
+ *
+ * Expected payload fields (all strings):
+ *   name, replyTo, subject, message
+ */
+exports.sendEmail = onCall(
+    {
+        region:  "europe-west1",
+        secrets: [gmailUser, gmailPass],
+    },
+    async (request) => {
+        const { name = "", replyTo = "", subject = "", message = "" } = request.data;
+
+        if (!name || !replyTo || !subject || !message) {
+            throw new HttpsError("invalid-argument", "All fields are required.");
+        }
+
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: gmailUser.value(),
+                pass: gmailPass.value(),
+            },
+        });
+
+        await transporter.sendMail({
+            from:     `"BurattiniBO App" <${gmailUser.value()}>`,
+            to:       "burattinibo@gmail.com",
+            bcc:      "ilcosmico@gmail.com",
+            replyTo:  `"${escapeHtml(name)}" <${replyTo}>`,
+            subject:  escapeHtml(subject),
+            html: `
+                <h2 style="color:#c0392b;">Messaggio dall\'app BurattiniBO</h2>
+                <p><strong>Da:</strong> ${escapeHtml(name)} &lt;${escapeHtml(replyTo)}&gt;</p>
+                <hr style="margin:16px 0;">
+                <p style="white-space:pre-wrap;">${escapeHtml(message)}</p>
+            `,
+        });
+
+        return { success: true };
+    }
+);
+
+/**
  * Firestore trigger: onSuggestionCreated
  *
  * Fires whenever a new document is written to the "suggestions" collection
