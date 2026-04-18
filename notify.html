@@ -245,6 +245,7 @@
             <div class="field">
                 <label>Titolo</label>
                 <input type="text" id="title" maxlength="50" placeholder="Es. Nuovo spettacolo!">
+                <div id="titleCharCount" style="text-align:right; font-size:0.8em; color:#aaa; margin-top:4px;">0 / 50</div>
             </div>
             <div class="field">
                 <label>Messaggio</label>
@@ -304,6 +305,9 @@
 
     let formSent = false;
 
+    document.getElementById("title").addEventListener("input", function() {
+        document.getElementById("titleCharCount").textContent = this.value.length + " / 50";
+    });
     document.getElementById("message").addEventListener("input", function() {
         document.getElementById("charCount").textContent = this.value.length + " / 1500";
     });
@@ -394,6 +398,7 @@
             el.style.pointerEvents = "";
         });
         document.querySelector("main").classList.remove("form-sent");
+        document.getElementById("titleCharCount").textContent = "0 / 50";
         document.getElementById("charCount").textContent = "0 / 1500";
 
         const btn = document.getElementById("btnSend");
