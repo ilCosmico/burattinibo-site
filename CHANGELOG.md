@@ -1,5 +1,11 @@
 # Changelog — BurattiniBO Site
 
+## [1.2] — 2026-04-18
+
+### Changed
+- `notify.html` — message field limit raised from 500 to 1500 characters; character counters
+  added to both title (0/50) and message (0/1500) fields, updated in real time while typing
+
 ## [1.1] — 2026-04-05
 
 ### Changed
