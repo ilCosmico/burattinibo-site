@@ -1,5 +1,14 @@
 # Changelog — BurattiniBO Site
 
+## [1.3] — 2026-04-18
+
+### Changed
+- `notify.html` — added FCM token field (visible only to ilcosmico@gmail.com) to send
+  targeted notifications to a single device; button label updates dynamically to
+  "Invia a dispositivo specifico" when a token is entered
+- `functions/index.js` — `sendNotification` accepts optional `fcmToken`; if provided,
+  sends to that specific token instead of the `burattinibo_news` topic
+
 ## [1.2] — 2026-04-18
 
 ### Changed

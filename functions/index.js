@@ -44,7 +44,7 @@ exports.sendNotification = onCall({ region: "europe-west1" }, async (request) =>
         throw new HttpsError("permission-denied", "Not authorized.");
     }
 
-    const { title = "", message = "", url = "", eventDate = "", eventTime = "", eventLocation = "" } = request.data;
+    const { title = "", message = "", url = "", eventDate = "", eventTime = "", eventLocation = "", fcmToken = "" } = request.data;
 
     if (!title && !message) {
         throw new HttpsError("invalid-argument", "Title or message required.");
@@ -53,7 +53,7 @@ exports.sendNotification = onCall({ region: "europe-west1" }, async (request) =>
     // Build the FCM message. Data payload ensures onMessageReceived() is
     // always called on the device, regardless of app state.
     const fcmMessage = {
-        topic: FCM_TOPIC,
+        ...(fcmToken ? { token: fcmToken } : { topic: FCM_TOPIC }),
         notification: { title, body: message },
         data: { title, message, url, eventDate, eventTime, eventLocation },
         android: {

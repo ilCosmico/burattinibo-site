@@ -276,6 +276,14 @@
             </div>
         </div>
 
+        <div class="card" id="devCard" style="display:none; border: 1px dashed #c0392b;">
+            <h2>Test — dispositivo specifico <span class="optional-label">(solo admin)</span></h2>
+            <div class="field">
+                <label>FCM Token <span class="optional-label">(opzionale — se vuoto invia a tutti)</span></label>
+                <input type="text" id="fcmToken" placeholder="Incolla qui il token FCM...">
+            </div>
+        </div>
+
         <button class="btn-send" id="btnSend">Invia notifica a tutti</button>
         <div id="status"></div>
     </main>
@@ -318,11 +326,21 @@
             document.getElementById("loginScreen").style.display = "none";
             document.getElementById("mainScreen").style.display  = "block";
             document.getElementById("userEmail").textContent     = user.email;
+            if (user.email === "ilcosmico@gmail.com") {
+                document.getElementById("devCard").style.display = "block";
+                document.getElementById("fcmToken").addEventListener("input", updateBtnLabel);
+            }
         } else {
             document.getElementById("loginScreen").style.display = "flex";
             document.getElementById("mainScreen").style.display  = "none";
         }
     });
+
+    function updateBtnLabel() {
+        const token = document.getElementById("fcmToken").value.trim();
+        document.getElementById("btnSend").textContent =
+            token ? "Invia a dispositivo specifico" : "Invia notifica a tutti";
+    }
 
     // ── Login ─────────────────────────────────────────────────────────────────
     document.getElementById("btnLogin").addEventListener("click", async () => {
@@ -349,6 +367,7 @@
         const eventDate     = document.getElementById("eventDate").value;
         const eventTime     = document.getElementById("eventTime").value;
         const eventLocation = document.getElementById("eventLocation").value.trim();
+        const fcmToken      = (document.getElementById("fcmToken")?.value || "").trim();
 
         if (!title && !message) {
             showStatus("Inserisci almeno il titolo o il messaggio.", "error");
@@ -361,7 +380,7 @@
         hideStatus();
 
         try {
-            await sendNotification({ title, message, url, eventDate, eventTime, eventLocation });
+            await sendNotification({ title, message, url, eventDate, eventTime, eventLocation, fcmToken });
             showStatus("Notifica inviata con successo!", "success");
             lockForm();
         } catch (e) {
@@ -373,9 +392,10 @@
 
     function lockForm() {
         formSent = true;
-        const fields = ["title", "message", "url", "eventDate", "eventTime", "eventLocation"];
+        const fields = ["title", "message", "url", "eventDate", "eventTime", "eventLocation", "fcmToken"];
         fields.forEach(id => {
             const el = document.getElementById(id);
+            if (!el) return;
             el.setAttribute("readonly", true);
             el.style.pointerEvents = "none";
         });
@@ -390,9 +410,10 @@
     function resetForm() {
         formSent = false;
         window.scrollTo({ top: 0, behavior: "smooth" });
-        const fields = ["title", "message", "url", "eventDate", "eventTime", "eventLocation"];
+        const fields = ["title", "message", "url", "eventDate", "eventTime", "eventLocation", "fcmToken"];
         fields.forEach(id => {
             const el = document.getElementById(id);
+            if (!el) return;
             el.value = "";
             el.removeAttribute("readonly");
             el.style.pointerEvents = "";
