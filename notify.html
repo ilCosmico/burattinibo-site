@@ -328,7 +328,9 @@
             document.getElementById("userEmail").textContent     = user.email;
             if (user.email === "ilcosmico@gmail.com") {
                 document.getElementById("devCard").style.display = "block";
-                document.getElementById("fcmToken").addEventListener("input", updateBtnLabel);
+                const tokenField = document.getElementById("fcmToken");
+                tokenField.addEventListener("input", updateBtnLabel);
+                tokenField.addEventListener("paste", () => setTimeout(updateBtnLabel, 0));
             }
         } else {
             document.getElementById("loginScreen").style.display = "flex";

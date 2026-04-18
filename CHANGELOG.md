@@ -1,5 +1,13 @@
 # Changelog — BurattiniBO Site
 
+## [1.4] — 2026-04-18
+
+### Fixed
+- `functions/index.js` — `ttl` corrected from string `"604800s"` to number `604800000` (ms)
+  as required by the Firebase Admin SDK
+- `notify.html` — FCM token field now updates button label on `paste` as well as `input`
+  (mobile browsers don't always fire `input` on paste)
+
 ## [1.3] — 2026-04-18
 
 ### Changed

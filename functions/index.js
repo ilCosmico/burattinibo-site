@@ -58,7 +58,7 @@ exports.sendNotification = onCall({ region: "europe-west1" }, async (request) =>
         data: { title, message, url, eventDate, eventTime, eventLocation },
         android: {
             priority: "high",
-            ttl:      "604800s",
+            ttl:      604800000,
         },
     };
 
