@@ -1,14 +1,16 @@
-const { onCall, HttpsError }  = require("firebase-functions/v2/https");
+const { onCall, onRequest, HttpsError } = require("firebase-functions/v2/https");
 const { onDocumentCreated }   = require("firebase-functions/v2/firestore");
 const { defineSecret }        = require("firebase-functions/params");
 const { initializeApp }       = require("firebase-admin/app");
 const { getMessaging }        = require("firebase-admin/messaging");
 const nodemailer              = require("nodemailer");
+const crypto                  = require("crypto");
 
 initializeApp();
 
-const gmailUser = defineSecret("GMAIL_USER");
-const gmailPass = defineSecret("GMAIL_APP_PASSWORD");
+const gmailUser    = defineSecret("GMAIL_USER");
+const gmailPass    = defineSecret("GMAIL_APP_PASSWORD");
+const notifyApiKey = defineSecret("NOTIFY_API_KEY");
 
 // Recipient of suggestion notification emails.
 const ADMIN_EMAIL = "ilcosmico@gmail.com";
@@ -21,6 +23,37 @@ const AUTHORIZED_EMAILS = [
 
 // FCM topic all app devices subscribe to.
 const FCM_TOPIC = "burattinibo_news";
+
+/**
+ * Builds and sends the FCM message shared by sendNotification and sendNotificationApi.
+ * Data payload ensures onMessageReceived() is always called on the device,
+ * regardless of app state.
+ */
+async function sendFcmNotification({ title = "", message = "", url = "", eventDate = "", eventTime = "", eventLocation = "", phone = "", fcmToken = "" }) {
+    if (!title && !message) {
+        throw new Error("Title or message required.");
+    }
+
+    const fcmMessage = {
+        ...(fcmToken ? { token: fcmToken } : { topic: FCM_TOPIC }),
+        notification: { title, body: message },
+        data: { title, message, url, eventDate, eventTime, eventLocation, phone },
+        android: {
+            priority: "high",
+            ttl:      604800000,
+        },
+    };
+
+    await getMessaging().send(fcmMessage);
+}
+
+/** Constant-time string comparison, used for the sendNotificationApi secret check. */
+function timingSafeEqualStr(a, b) {
+    const bufA = Buffer.from(String(a));
+    const bufB = Buffer.from(String(b));
+    if (bufA.length !== bufB.length) return false;
+    return crypto.timingSafeEqual(bufA, bufB);
+}
 
 /**
  * Callable function: sendNotification
@@ -44,27 +77,45 @@ exports.sendNotification = onCall({ region: "europe-west1" }, async (request) =>
         throw new HttpsError("permission-denied", "Not authorized.");
     }
 
-    const { title = "", message = "", url = "", eventDate = "", eventTime = "", eventLocation = "", fcmToken = "" } = request.data;
-
-    if (!title && !message) {
-        throw new HttpsError("invalid-argument", "Title or message required.");
+    try {
+        await sendFcmNotification(request.data);
+    } catch (e) {
+        throw new HttpsError("invalid-argument", e.message);
     }
-
-    // Build the FCM message. Data payload ensures onMessageReceived() is
-    // always called on the device, regardless of app state.
-    const fcmMessage = {
-        ...(fcmToken ? { token: fcmToken } : { topic: FCM_TOPIC }),
-        notification: { title, body: message },
-        data: { title, message, url, eventDate, eventTime, eventLocation },
-        android: {
-            priority: "high",
-            ttl:      604800000,
-        },
-    };
-
-    await getMessaging().send(fcmMessage);
     return { success: true };
 });
+
+/**
+ * HTTP function: sendNotificationApi
+ *
+ * Dedicated entry point for sending notifications without interactive Google
+ * login (e.g. from an automated assistant). Authorized via a shared secret
+ * instead of Firebase Auth — set with:
+ *   firebase functions:secrets:set NOTIFY_API_KEY
+ * and sent as the "X-Notify-Key" header. Same payload/behavior as sendNotification.
+ */
+exports.sendNotificationApi = onRequest(
+    { region: "europe-west1", secrets: [notifyApiKey] },
+    async (req, res) => {
+        if (req.method !== "POST") {
+            res.status(405).json({ success: false, error: "Method not allowed." });
+            return;
+        }
+
+        const providedKey = req.get("X-Notify-Key") || "";
+        if (!timingSafeEqualStr(providedKey, notifyApiKey.value())) {
+            res.status(401).json({ success: false, error: "Unauthorized." });
+            return;
+        }
+
+        try {
+            await sendFcmNotification(req.body || {});
+            res.status(200).json({ success: true });
+        } catch (e) {
+            res.status(400).json({ success: false, error: e.message });
+        }
+    }
+);
 
 /**
  * Callable function: sendEmail

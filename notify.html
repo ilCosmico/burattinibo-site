@@ -274,6 +274,10 @@
                 <label>Luogo <span class="optional-label">(opzionale)</span></label>
                 <input type="text" id="eventLocation" placeholder="Es. Via del Pratello 57, Bologna">
             </div>
+            <div class="field">
+                <label>Telefono <span class="optional-label">(opzionale)</span></label>
+                <input type="tel" id="phone" placeholder="Es. 333 1234567">
+            </div>
         </div>
 
         <div class="card" id="devCard" style="display:none; border: 1px dashed #c0392b;">
@@ -369,6 +373,7 @@
         const eventDate     = document.getElementById("eventDate").value;
         const eventTime     = document.getElementById("eventTime").value;
         const eventLocation = document.getElementById("eventLocation").value.trim();
+        const phone         = document.getElementById("phone").value.trim();
         const fcmToken      = (document.getElementById("fcmToken")?.value || "").trim();
 
         if (!title && !message) {
@@ -382,7 +387,7 @@
         hideStatus();
 
         try {
-            await sendNotification({ title, message, url, eventDate, eventTime, eventLocation, fcmToken });
+            await sendNotification({ title, message, url, eventDate, eventTime, eventLocation, phone, fcmToken });
             showStatus("Notifica inviata con successo!", "success");
             lockForm();
         } catch (e) {
@@ -394,7 +399,7 @@
 
     function lockForm() {
         formSent = true;
-        const fields = ["title", "message", "url", "eventDate", "eventTime", "eventLocation", "fcmToken"];
+        const fields = ["title", "message", "url", "eventDate", "eventTime", "eventLocation", "phone", "fcmToken"];
         fields.forEach(id => {
             const el = document.getElementById(id);
             if (!el) return;
@@ -412,7 +417,7 @@
     function resetForm() {
         formSent = false;
         window.scrollTo({ top: 0, behavior: "smooth" });
-        const fields = ["title", "message", "url", "eventDate", "eventTime", "eventLocation", "fcmToken"];
+        const fields = ["title", "message", "url", "eventDate", "eventTime", "eventLocation", "phone", "fcmToken"];
         fields.forEach(id => {
             const el = document.getElementById(id);
             if (!el) return;

@@ -1,5 +1,22 @@
 # Changelog — BurattiniBO Site
 
+## [1.5] — 2026-07-25
+
+### Added
+- `functions/index.js` — new `sendNotificationApi` HTTP endpoint, authenticated via a shared
+  secret (`NOTIFY_API_KEY` in Secret Manager, sent as the `X-Notify-Key` header) instead of
+  Firebase Auth. Lets an automated caller send notifications without an interactive Google
+  login. Same payload and behavior as the existing `sendNotification` callable; the shared FCM
+  send logic was extracted into `sendFcmNotification()`.
+- `notify.html` / `sendFcmNotification()` — optional `phone` field, sent through to the app so
+  the notification dialog can show a "Chiama" (call) action.
+
+### Fixed
+- The project had been silently downgraded from Blaze to Spark on 2026-07-05 (billing account
+  issue), which broke every Cloud Functions v2 function (`sendNotification`, `sendEmail`,
+  `onSuggestionCreated`) — they returned 500/503/`internal` errors depending on the entry point.
+  Restored the Blaze plan and redeployed; all functions confirmed working again.
+
 ## [1.4] — 2026-04-18
 
 ### Fixed
