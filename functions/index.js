@@ -34,10 +34,12 @@ async function sendFcmNotification({ title = "", message = "", url = "", eventDa
         throw new Error("Title or message required.");
     }
 
+    const notificationId = crypto.randomUUID();
+
     const fcmMessage = {
         ...(fcmToken ? { token: fcmToken } : { topic: FCM_TOPIC }),
         notification: { title, body: message },
-        data: { title, message, url, eventDate, eventTime, eventLocation, phone },
+        data: { title, message, url, eventDate, eventTime, eventLocation, phone, notificationId },
         android: {
             priority: "high",
             ttl:      604800000,
