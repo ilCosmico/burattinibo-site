@@ -422,8 +422,9 @@
         hideStatus();
 
         try {
-            await sendNotification({ title, message, url, eventDate, eventTime, eventLocation, phone, fcmToken });
+            const result = await sendNotification({ title, message, url, eventDate, eventTime, eventLocation, phone, fcmToken });
             showStatus("Notifica inviata con successo!", "success");
+            document.getElementById("retractId").value = result.data.notificationId || "";
             lockForm();
         } catch (e) {
             showStatus("Errore durante l'invio: " + (e.message || e), "error");

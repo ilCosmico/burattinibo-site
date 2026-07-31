@@ -63,6 +63,7 @@ async function sendFcmNotification({ title = "", message = "", url = "", eventDa
     };
 
     await getMessaging().send(fcmMessage);
+    return notificationId;
 }
 
 /** Constant-time string comparison, used for the sendNotificationApi secret check. */
@@ -96,11 +97,11 @@ exports.sendNotification = onCall({ region: "europe-west1" }, async (request) =>
     }
 
     try {
-        await sendFcmNotification(request.data);
+        const notificationId = await sendFcmNotification(request.data);
+        return { success: true, notificationId };
     } catch (e) {
         throw new HttpsError("invalid-argument", e.message);
     }
-    return { success: true };
 });
 
 /**
@@ -127,8 +128,8 @@ exports.sendNotificationApi = onRequest(
         }
 
         try {
-            await sendFcmNotification(req.body || {});
-            res.status(200).json({ success: true });
+            const notificationId = await sendFcmNotification(req.body || {});
+            res.status(200).json({ success: true, notificationId });
         } catch (e) {
             res.status(400).json({ success: false, error: e.message });
         }
