@@ -207,6 +207,17 @@
         }
         #status.success { background: #2e7d32; color: #fff; }
         #status.error   { background: #c62828; color: #fff; }
+
+        #retractStatus {
+            display: none;
+            margin-top: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            text-align: center;
+        }
+        #retractStatus.success { background: #2e7d32; color: #fff; }
+        #retractStatus.error   { background: #c62828; color: #fff; }
     </style>
 </head>
 <body>
@@ -290,6 +301,16 @@
 
         <button class="btn-send" id="btnSend">Invia notifica a tutti</button>
         <div id="status"></div>
+
+        <div class="card" id="retractCard" style="display:none; border: 1px dashed #c0392b; margin-top:20px;">
+            <h2>Annulla notifica <span class="optional-label">(solo admin)</span></h2>
+            <div class="field">
+                <label>ID notifica</label>
+                <input type="text" id="retractId" placeholder="Incolla qui l'ID della notifica da annullare...">
+            </div>
+            <button class="btn-send" id="btnRetract" style="background:#666;">Annulla ultima notifica</button>
+            <div id="retractStatus"></div>
+        </div>
     </main>
 </div>
 
@@ -332,6 +353,7 @@
             document.getElementById("userEmail").textContent     = user.email;
             if (user.email === "ilcosmico@gmail.com") {
                 document.getElementById("devCard").style.display = "block";
+                document.getElementById("retractCard").style.display = "block";
                 const tokenField = document.getElementById("fcmToken");
                 tokenField.addEventListener("input", updateBtnLabel);
                 tokenField.addEventListener("paste", () => setTimeout(updateBtnLabel, 0));
@@ -396,6 +418,41 @@
             btn.textContent = "Invia notifica a tutti";
         }
     });
+
+    // ── Retract a previously sent notification ─────────────────────────────────
+    document.getElementById("btnRetract").addEventListener("click", async () => {
+        const deleteNotificationId = document.getElementById("retractId").value.trim();
+        if (!deleteNotificationId) {
+            showRetractStatus("Inserisci l'ID della notifica da annullare.", "error");
+            return;
+        }
+
+        const btn = document.getElementById("btnRetract");
+        btn.disabled = true;
+        btn.textContent = "Annullamento in corso...";
+        hideRetractStatus();
+
+        try {
+            await sendNotification({ deleteNotificationId });
+            showRetractStatus("Notifica annullata con successo!", "success");
+            document.getElementById("retractId").value = "";
+        } catch (e) {
+            showRetractStatus("Errore durante l'annullamento: " + (e.message || e), "error");
+        }
+        btn.disabled = false;
+        btn.textContent = "Annulla ultima notifica";
+    });
+
+    function showRetractStatus(msg, type) {
+        const el = document.getElementById("retractStatus");
+        el.textContent = msg;
+        el.className = type;
+        el.style.display = "block";
+    }
+
+    function hideRetractStatus() {
+        document.getElementById("retractStatus").style.display = "none";
+    }
 
     function lockForm() {
         formSent = true;
