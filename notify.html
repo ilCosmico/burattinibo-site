@@ -308,6 +308,10 @@
                 <label>ID notifica</label>
                 <input type="text" id="retractId" placeholder="Incolla qui l'ID della notifica da annullare...">
             </div>
+            <div class="field">
+                <label>FCM Token <span class="optional-label">(opzionale — se vuoto annulla per tutti)</span></label>
+                <input type="text" id="retractFcmToken" placeholder="Incolla qui il token FCM...">
+            </div>
             <button class="btn-send" id="btnRetract" style="background:#666;">Annulla ultima notifica</button>
             <div id="retractStatus"></div>
         </div>
@@ -422,6 +426,7 @@
     // ── Retract a previously sent notification ─────────────────────────────────
     document.getElementById("btnRetract").addEventListener("click", async () => {
         const deleteNotificationId = document.getElementById("retractId").value.trim();
+        const retractFcmToken      = document.getElementById("retractFcmToken").value.trim();
         if (!deleteNotificationId) {
             showRetractStatus("Inserisci l'ID della notifica da annullare.", "error");
             return;
@@ -433,9 +438,10 @@
         hideRetractStatus();
 
         try {
-            await sendNotification({ deleteNotificationId });
+            await sendNotification({ deleteNotificationId, fcmToken: retractFcmToken });
             showRetractStatus("Notifica annullata con successo!", "success");
             document.getElementById("retractId").value = "";
+            document.getElementById("retractFcmToken").value = "";
         } catch (e) {
             showRetractStatus("Errore durante l'annullamento: " + (e.message || e), "error");
         }
