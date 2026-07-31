@@ -361,6 +361,9 @@
                 const tokenField = document.getElementById("fcmToken");
                 tokenField.addEventListener("input", updateBtnLabel);
                 tokenField.addEventListener("paste", () => setTimeout(updateBtnLabel, 0));
+                const retractTokenField = document.getElementById("retractFcmToken");
+                retractTokenField.addEventListener("input", updateRetractBtnLabel);
+                retractTokenField.addEventListener("paste", () => setTimeout(updateRetractBtnLabel, 0));
             }
         } else {
             document.getElementById("loginScreen").style.display = "flex";
@@ -372,6 +375,12 @@
         const token = document.getElementById("fcmToken").value.trim();
         document.getElementById("btnSend").textContent =
             token ? "Invia a dispositivo specifico" : "Invia notifica a tutti";
+    }
+
+    function updateRetractBtnLabel() {
+        const token = document.getElementById("retractFcmToken").value.trim();
+        document.getElementById("btnRetract").textContent =
+            token ? "Annulla su dispositivo specifico" : "Annulla ultima notifica";
     }
 
     // ── Login ─────────────────────────────────────────────────────────────────
@@ -446,7 +455,7 @@
             showRetractStatus("Errore durante l'annullamento: " + (e.message || e), "error");
         }
         btn.disabled = false;
-        btn.textContent = "Annulla ultima notifica";
+        updateRetractBtnLabel();
     });
 
     function showRetractStatus(msg, type) {
