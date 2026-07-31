@@ -184,6 +184,8 @@
         .btn-send:disabled { background: #ccc; cursor: not-allowed; }
         .btn-send.new { background: #2e7d32; }
         .btn-send.new:hover { background: #1b5e20; }
+        .btn-send.retract { background: #d35400; }
+        .btn-send.retract:hover { background: #a04000; }
 
         /* Read-only state after send */
         .form-sent input, .form-sent textarea {
@@ -312,7 +314,7 @@
                 <label>FCM Token <span class="optional-label">(opzionale — se vuoto annulla per tutti)</span></label>
                 <input type="text" id="retractFcmToken" placeholder="Incolla qui il token FCM...">
             </div>
-            <button class="btn-send" id="btnRetract" style="background:#666;">Annulla ultima notifica</button>
+            <button class="btn-send retract" id="btnRetract">Annulla notifica</button>
             <div id="retractStatus"></div>
         </div>
     </main>
@@ -380,7 +382,7 @@
     function updateRetractBtnLabel() {
         const token = document.getElementById("retractFcmToken").value.trim();
         document.getElementById("btnRetract").textContent =
-            token ? "Annulla su dispositivo specifico" : "Annulla ultima notifica";
+            token ? "Annulla su dispositivo specifico" : "Annulla notifica";
     }
 
     // ── Login ─────────────────────────────────────────────────────────────────
