@@ -50,12 +50,14 @@ async function sendFcmNotification({ title = "", message = "", url = "", eventDa
         throw new Error("Title or message required.");
     }
 
-    const notificationId = crypto.randomUUID();
+    // An ephemeral send gets no id at all: the app treats a missing notificationId as "don't
+    // store this", so there is no separate flag to thread through the whole receive pipeline.
+    const notificationId = ephemeral ? "" : crypto.randomUUID();
 
     const fcmMessage = {
         ...(fcmToken ? { token: fcmToken } : { topic: FCM_TOPIC }),
         notification: { title, body: message },
-        data: { title, message, url, eventDate, eventTime, eventLocation, phone, notificationId, ephemeral: ephemeral ? "true" : "false" },
+        data: { title, message, url, eventDate, eventTime, eventLocation, phone, notificationId },
         android: {
             priority: "high",
             ttl:      604800000,
