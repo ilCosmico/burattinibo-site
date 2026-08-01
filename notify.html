@@ -269,6 +269,12 @@
                 <label>URL <span class="optional-label">(opzionale)</span></label>
                 <input type="url" id="url" placeholder="https://...">
             </div>
+            <div class="field" style="display:flex; align-items:center; gap:8px;">
+                <input type="checkbox" id="ephemeral" style="width:auto;">
+                <label for="ephemeral" style="margin:0;">Notifica effimera
+                    <span class="optional-label">(non viene salvata nella cronologia dell'app)</span>
+                </label>
+            </div>
         </div>
 
         <div class="card">
@@ -412,6 +418,7 @@
         const eventLocation = document.getElementById("eventLocation").value.trim();
         const phone         = document.getElementById("phone").value.trim();
         const fcmToken      = (document.getElementById("fcmToken")?.value || "").trim();
+        const ephemeral     = document.getElementById("ephemeral").checked;
 
         if (!title && !message) {
             showStatus("Inserisci almeno il titolo o il messaggio.", "error");
@@ -424,7 +431,7 @@
         hideStatus();
 
         try {
-            const result = await sendNotification({ title, message, url, eventDate, eventTime, eventLocation, phone, fcmToken });
+            const result = await sendNotification({ title, message, url, eventDate, eventTime, eventLocation, phone, fcmToken, ephemeral });
             showStatus("Notifica inviata con successo!", "success");
             document.getElementById("retractId").value = result.data.notificationId || "";
             lockForm();
@@ -481,6 +488,7 @@
             el.setAttribute("readonly", true);
             el.style.pointerEvents = "none";
         });
+        document.getElementById("ephemeral").disabled = true;
         document.querySelector("main").classList.add("form-sent");
 
         const btn = document.getElementById("btnSend");
@@ -500,6 +508,8 @@
             el.removeAttribute("readonly");
             el.style.pointerEvents = "";
         });
+        document.getElementById("ephemeral").checked = false;
+        document.getElementById("ephemeral").disabled = false;
         document.querySelector("main").classList.remove("form-sent");
         document.getElementById("titleCharCount").textContent = "0 / 50";
         document.getElementById("charCount").textContent = "0 / 1500";

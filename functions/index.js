@@ -29,7 +29,7 @@ const FCM_TOPIC = "burattinibo_news";
  * Data payload ensures onMessageReceived() is always called on the device,
  * regardless of app state.
  */
-async function sendFcmNotification({ title = "", message = "", url = "", eventDate = "", eventTime = "", eventLocation = "", phone = "", fcmToken = "", deleteNotificationId = "" }) {
+async function sendFcmNotification({ title = "", message = "", url = "", eventDate = "", eventTime = "", eventLocation = "", phone = "", fcmToken = "", deleteNotificationId = "", ephemeral = false }) {
     // Retract mode: a silent, data-only message (no "notification" field, so it never shows as a
     // new push) telling the app to remove a previously sent notification by id and dismiss it from
     // the system tray if still showing. Sent by the "Annulla ultima notifica" action in notify.html.
@@ -55,7 +55,7 @@ async function sendFcmNotification({ title = "", message = "", url = "", eventDa
     const fcmMessage = {
         ...(fcmToken ? { token: fcmToken } : { topic: FCM_TOPIC }),
         notification: { title, body: message },
-        data: { title, message, url, eventDate, eventTime, eventLocation, phone, notificationId },
+        data: { title, message, url, eventDate, eventTime, eventLocation, phone, notificationId, ephemeral: ephemeral ? "true" : "false" },
         android: {
             priority: "high",
             ttl:      604800000,
