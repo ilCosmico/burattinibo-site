@@ -170,6 +170,122 @@
             line-height: 1.6;
         }
 
+        .feature[role="button"] {
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .feature[role="button"]:hover,
+        .feature[role="button"]:focus-visible {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(44,26,14,0.16);
+            outline: none;
+        }
+        .feature-hint {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.78em;
+            color: #c0392b;
+            opacity: 0.75;
+        }
+
+        /* ── Feature detail modal ── */
+        .modal-overlay {
+            display: flex;
+            position: fixed;
+            inset: 0;
+            background: rgba(20, 8, 0, 0.72);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-panel {
+            background: #fdf6ee;
+            border-radius: 16px;
+            max-width: 480px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 12px 48px rgba(0,0,0,0.4);
+            position: relative;
+            transform: scale(0.94) translateY(8px);
+            transition: transform 0.2s ease;
+        }
+        .modal-overlay.open .modal-panel {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 12px; right: 12px;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(30,10,0,0.55);
+            color: #fff;
+            font-size: 1.2em;
+            line-height: 1;
+            cursor: pointer;
+            z-index: 1;
+        }
+        .modal-close:hover { background: #c0392b; }
+
+        .modal-panel video {
+            width: 100%;
+            display: block;
+            border-radius: 0 0 16px 16px;
+            background: #000;
+        }
+
+        .modal-body {
+            padding: 44px 28px 24px;
+        }
+        .modal-body h3 {
+            font-size: 1.2em;
+            color: #c0392b;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 12px;
+        }
+        .modal-body .modal-icon {
+            font-size: 1.1em;
+            margin-right: 8px;
+        }
+        .modal-body .modal-intro {
+            font-size: 0.98em;
+            line-height: 1.7;
+            color: #4a2e18;
+            margin-bottom: 14px;
+        }
+        .modal-body ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .modal-body li {
+            font-size: 0.92em;
+            line-height: 1.5;
+            color: #4a2e18;
+            padding-left: 22px;
+            position: relative;
+        }
+        .modal-body li::before {
+            content: "\2713";
+            position: absolute;
+            left: 0;
+            color: #c0392b;
+            font-weight: bold;
+        }
+
         /* ── Footer ── */
         footer {
             text-align: center;
@@ -191,14 +307,14 @@
     <div class="header-overlay">
         <img src="assets/logo_app.png" alt="Burattini di Bologna">
         <h1>BurattiniBO</h1>
-        <p>I burattini di Riccardo Pazzaglia</p>
+        <p>Burattini a Bologna</p>
     </div>
 </header>
 
 <main>
 
     <p class="description">
-        Scopri il mondo dei burattini bolognesi con l'app ufficiale di Riccardo Pazzaglia.
+        Scopri il mondo dei burattini bolognesi con l'app ufficiale di Burattini a Bologna.
         Giochi, presentazioni, notifiche sugli spettacoli e tanto altro.
     </p>
 
@@ -217,29 +333,35 @@
     </a>
 
     <div class="features">
-        <div class="feature">
-            <h3>Presentazione</h3>
+        <div class="feature" role="button" tabindex="0" data-feature="presentazione">
+            <h3>🎭 Presentazione</h3>
             <p>Conosci i personaggi del teatro dei burattini bolognesi con audio originali.</p>
+            <span class="feature-hint">Guarda un'anteprima &rarr;</span>
         </div>
-        <div class="feature">
-            <h3>Squizza Mostri</h3>
+        <div class="feature" role="button" tabindex="0" data-feature="squizza-mostri">
+            <h3>👹 Squizza Mostri</h3>
             <p>Il gioco dove devi colpire i mostri prima che scappino. Tre livelli di difficoltà.</p>
+            <span class="feature-hint">Guarda un'anteprima &rarr;</span>
         </div>
-        <div class="feature">
-            <h3>Memory</h3>
+        <div class="feature" role="button" tabindex="0" data-feature="memory">
+            <h3>🃏 Memory</h3>
             <p>Gioca a memory con le facce dei burattini, fino a 4 giocatori.</p>
+            <span class="feature-hint">Guarda un'anteprima &rarr;</span>
         </div>
-        <div class="feature">
-            <h3>Puzzle</h3>
+        <div class="feature" role="button" tabindex="0" data-feature="puzzle">
+            <h3>🧩 Puzzle</h3>
             <p>Ricomponi il burattino contro il tempo. Più pezzi, più difficile.</p>
+            <span class="feature-hint">Guarda un'anteprima &rarr;</span>
         </div>
-        <div class="feature">
-            <h3>Labirinto</h3>
-            <p>Guida Sganapino attraverso il labirinto, livello dopo livello.</p>
+        <div class="feature" role="button" tabindex="0" data-feature="labirinto">
+            <h3>🌀 Labirinto</h3>
+            <p>Guida i burattini attraverso il labirinto, livello dopo livello.</p>
+            <span class="feature-hint">Guarda un'anteprima &rarr;</span>
         </div>
-        <div class="feature">
-            <h3>Notifiche</h3>
+        <div class="feature" role="button" tabindex="0" data-feature="notifiche">
+            <h3>🔔 Notifiche</h3>
             <p>Ricevi avvisi sugli spettacoli direttamente sul tuo telefono.</p>
+            <span class="feature-hint">Guarda un'anteprima &rarr;</span>
         </div>
     </div>
 
@@ -251,6 +373,139 @@
         <a href="privacy-policy.html">Privacy Policy</a>
     </p>
 </footer>
+
+<div class="modal-overlay" id="featureModal">
+    <div class="modal-panel">
+        <button class="modal-close" id="modalClose" aria-label="Chiudi">&times;</button>
+        <div class="modal-body">
+            <h3><span class="modal-icon" id="modalIcon"></span><span id="modalTitle"></span></h3>
+            <p class="modal-intro" id="modalDescription"></p>
+            <ul id="modalBullets"></ul>
+        </div>
+        <video id="modalVideo" autoplay muted loop playsinline controls>
+            <source id="modalVideoMp4" src="" type="video/mp4">
+        </video>
+    </div>
+</div>
+
+<script>
+    const FEATURES = {
+        "presentazione": {
+            icon: "🎭",
+            title: "Presentazione",
+            description: "Conosci i personaggi del teatro dei burattini bolognesi, con audio originali che raccontano ognuno di loro.",
+            bullets: [
+                "Una scheda per ogni burattino, con foto e descrizione",
+                "Voci originali dei personaggi di Burattini a Bologna",
+                "Sfoglia la galleria semplicemente scorrendo"
+            ],
+            video: "assets/videos/presentazione"
+        },
+        "squizza-mostri": {
+            icon: "👹",
+            title: "Squizza Mostri",
+            description: "Il gioco dove devi colpire i mostri prima che scappino, per mettere alla prova i tuoi riflessi.",
+            bullets: [
+                "Tre livelli di difficoltà crescente",
+                "Punteggio e bastonate contate in tempo reale",
+                "Sfondi ad alta risoluzione per ogni livello"
+            ],
+            video: "assets/videos/squizza-mostri"
+        },
+        "memory": {
+            icon: "🃏",
+            title: "Memory",
+            description: "Il classico gioco delle coppie, con le facce dei burattini al posto delle solite carte.",
+            bullets: [
+                "Da 1 a 4 giocatori sullo stesso dispositivo",
+                "Dimensione del tavolo di gioco regolabile dalle impostazioni",
+                "Punteggio finale con possibilità di rigiocare subito"
+            ],
+            video: "assets/videos/memory"
+        },
+        "puzzle": {
+            icon: "🧩",
+            title: "Puzzle",
+            description: "Ricomponi il burattino contro il tempo, scegliendo tu stesso quanto renderlo impegnativo.",
+            bullets: [
+                "Numero di pezzi personalizzabile: più ne scegli, più è difficile",
+                "Un burattino diverso a ogni partita",
+                "Cronometro a schermo per sfidare il tuo record"
+            ],
+            video: "assets/videos/puzzle"
+        },
+        "labirinto": {
+            icon: "🌀",
+            title: "Labirinto",
+            description: "Guida i burattini attraverso il labirinto, livello dopo livello.",
+            bullets: [
+                "Più livelli con difficoltà crescente",
+                "Comandi semplici, pensati anche per i più piccoli",
+                "Frasi e suoni originali durante il percorso"
+            ],
+            video: "assets/videos/labirinto"
+        },
+        "notifiche": {
+            icon: "🔔",
+            title: "Notifiche",
+            description: "Non perderti nessuno spettacolo: ricevi gli avvisi di Burattini a Bologna direttamente sul telefono.",
+            bullets: [
+                "Cronologia delle notifiche ricevute, sempre consultabile",
+                "Apri la mappa del luogo dell'evento con un tocco",
+                "Salva un promemoria a calendario in automatico"
+            ],
+            video: "assets/videos/notifiche"
+        }
+    };
+
+    const modal = document.getElementById("featureModal");
+    const modalVideo = document.getElementById("modalVideo");
+    const modalVideoMp4 = document.getElementById("modalVideoMp4");
+    const modalIcon = document.getElementById("modalIcon");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalDescription = document.getElementById("modalDescription");
+    const modalBullets = document.getElementById("modalBullets");
+
+    function openFeatureModal(key) {
+        const feature = FEATURES[key];
+        if (!feature) return;
+        modalIcon.textContent = feature.icon;
+        modalTitle.textContent = feature.title;
+        modalDescription.textContent = feature.description;
+        modalBullets.innerHTML = "";
+        feature.bullets.forEach(bullet => {
+            const li = document.createElement("li");
+            li.textContent = bullet;
+            modalBullets.appendChild(li);
+        });
+        modalVideoMp4.src = feature.video + ".mp4";
+        modalVideo.load();
+        modal.classList.add("open");
+    }
+
+    function closeFeatureModal() {
+        modal.classList.remove("open");
+        modalVideo.pause();
+    }
+
+    document.querySelectorAll(".feature[data-feature]").forEach(card => {
+        card.addEventListener("click", () => openFeatureModal(card.dataset.feature));
+        card.addEventListener("keydown", e => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                openFeatureModal(card.dataset.feature);
+            }
+        });
+    });
+
+    document.getElementById("modalClose").addEventListener("click", closeFeatureModal);
+    modal.addEventListener("click", e => {
+        if (e.target === modal) closeFeatureModal();
+    });
+    document.addEventListener("keydown", e => {
+        if (e.key === "Escape" && modal.classList.contains("open")) closeFeatureModal();
+    });
+</script>
 
 </body>
 </html>

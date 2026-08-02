@@ -1,6 +1,16 @@
 # Changelog — BurattiniBO Site
 
-## [1.5] — 2026-07-25
+## [1.6] — 2026-08-02
+
+### Added
+- `index.html` — the 6 feature cards (Presentazione, Squizza Mostri, Memory, Puzzle, Labirinto,
+  Notifiche) are now clickable, opening a modal with a muted looping demo video (real phone screen
+  recordings, cropped/trimmed/encoded with ffmpeg) plus an expanded description and a bullet list
+  of functionalities for that section.
+
+### Changed
+- Header tagline and page subtitle now say "Burattini a Bologna" instead of "Riccardo Pazzaglia",
+  matching the brand name used elsewhere on the site.
 
 ### Added
 - `functions/index.js` — new `sendNotificationApi` HTTP endpoint, authenticated via a shared
